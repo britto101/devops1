@@ -1,0 +1,26 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  MAVEN_OPTS: "-Xmx1g"
+
+steps:
+- task: Maven@3
+  inputs:
+    mavenPomFile: 'pom.xml'
+    goals: 'clean install'
+    options: '-Dmaven.test.skip=true' # Skip tests in this step
+    mavenOptions: '-Xmx1024m'
+
+- task: Maven@3
+  displayName: 'Run Regression Tests'
+  inputs:
+    mavenPomFile: 'pom.xml'
+    goals: 'test'
+    options: '-Dgroups=regression' # For TestNG group-based filtering
+    mavenOptions: '-Xmx1024m'
